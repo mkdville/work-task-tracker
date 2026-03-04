@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daily Work Checklist</title>
+  <meta name="theme-color" content="#0f172a" />
+  <style>
+    :root{
+      --bg1:#f8fafc; --bg2:#f1f5f9;
+      --card:#ffffff; --muted:#64748b;
+      --text:#0f172a; --border:#e2e8f0;
+      --primary:#0f172a; --primaryText:#ffffff;
+      --warnBg:#fffbeb; --warnText:#92400e;
+      --okBg:#ecfdf5; --okText:#047857;
+      --shadow: 0 10px 25px rgba(15,23,42,.08);
+      --shadow2: 0 6px 18px rgba(15,23,42,.10);
+      --r:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: linear-gradient(to bottom, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+    .wrap{
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 18px 14px 26px;
+      min-height: 100vh;
+    }
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(226,232,240,.0);
+      border-radius: calc(var(--r) + 8px);
+      box-shadow: var(--shadow);
+    }
+    .card2{
+      background: var(--card);
+      border-radius: calc(var(--r) + 8px);
+      box-shadow: var(--shadow2);
+    }
+    .p16{padding:16px}
+    .p18{padding:18px}
+    .row{display:flex; gap:10px; align-items:center}
+    .rowTop{display:flex; gap:10px; align-items:flex-start; justify-content:space-between}
+    .muted{color:var(--muted)}
+    .small{font-size:12px}
+    .title{font-size:22px; font-weight:800; margin:0}
+    .sub{font-size:13px; margin:6px 0 0; line-height:1.35}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space:nowrap;
+    }
+    .badgeWarn{background:var(--warnBg); color:var(--warnText)}
+    .badgeOk{background:var(--okBg); color:var(--okText)}
+    .grid3{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px}
+    .stat{
+      background: #f8fafc;
+      border-radius: 18px;
+      padding: 12px;
+      border: 1px solid rgba(226,232,240,.0);
+    }
+    .stat .k{font-size:12px; color:var(--muted)}
+    .stat .v{font-size:20px; font-weight:800; margin-top:2px}
+    .dateRow{display:flex; gap:10px; margin-top:12px}
+    input[type="date"]{
+      flex:1;
+      height: 48px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      padding: 0 12px;
+      font-size: 15px;
+      background: #fff;
+      color: var(--text);
+    }
+    button{
+      border:0;
+      cursor:pointer;
+      font-weight:800;
+      border-radius: 18px;
+      height: 48px;
+      padding: 0 14px;
+      font-size: 14px;
+    }
+    .btnPrimary{background: var(--primary); color: var(--primaryText)}
+    .btnSecondary{
+      background: #eef2ff00;
+      color: var(--text);
+      border: 1px solid var(--border);
+      height: 44px;
+      border-radius: 18px;
+      width:100%;
+    }
+    .section{margin-top:14px}
+    .taskCard{padding:14px 14px 14px; border-radius: calc(var(--r) + 8px)}
+    .taskTop{display:flex; gap:10px; align-items:flex-start}
+    .icon{
+      width: 22px; height:22px; border-radius: 999px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border: 2px solid #cbd5e1;
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
+    .icon.complete{border-color:#10b981; background:#ecfdf5}
+    .icon.na{border-color:#f59e0b; background:#fffbeb}
+    .taskTitle{
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin: 0;
+    }
+    .taskTitle.complete{color:#64748b; text-decoration: line-through}
+    .statusRow{display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-top:12px}
+    .pill{
+      height: 40px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pill.active{
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primaryText);
+    }
+    .footerSpace{height: 18px}
+    .topIcon{
+      width: 44px; height: 44px;
+      border-radius: 18px;
+      background: #f1f5f9;
+      display:flex; align-items:center; justify-content:center;
+      flex: 0 0 auto;
+    }
+    .miniRow{display:flex; gap:10px; align-items:center; margin-top:12px}
+    .miniDate{
+      display:inline-flex; gap:8px; align-items:center;
+      padding: 8px 12px; border-radius: 16px;
+      background:#f8fafc; font-weight:800; font-size:13px;
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+      line-height: 1.35;
+    }
+    .toast{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 18px;
+      background: rgba(15,23,42,.92);
+      color: white;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 800;
+      max-width: min(440px, calc(100vw - 24px));
+      display:none;
+      z-index: 99;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card p18">
+      <div class="rowTop">
+        <div style="min-width:0">
+          <div class="small muted" style="font-weight:900; letter-spacing:.08em; text-transform:uppercase">Work task tracker</div>
+          <h1 class="title">Daily Checklist</h1>
+          <p class="sub muted">Tap each task: <b>Complete</b>, <b>Incomplete</b>, or <b>N/A</b>. Then hit <b>Save day</b>. If anything is still outstanding, you’ll be prompted.</p>
+        </div>
+        <div class="topIcon" aria-hidden="true">
+          <!-- phone icon -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M10 2h4a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+            <path d="M11 19h2" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="grid3 section" id="stats">
+        <div class="stat"><div class="k">Total</div><div class="v" id="statTotal">0</div></div>
+        <div class="stat"><div class="k">Complete</div><div class="v" id="statComplete">0</div></div>
+        <div class="stat"><div class="k">Outstanding</div><div class="v" id="statOutstanding">0</div></div>
+      </div>
+
+      <div class="miniRow">
+        <div class="miniDate" title="Selected date">
+          <!-- calendar icon -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M8 2v3M16 2v3" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 9h18" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5 5h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span id="prettyDate"></span>
+        </div>
+        <div style="flex:1"></div>
+        <div id="saveBadge" class="badge badgeWarn">
+          <!-- warn icon -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M10.29 3.86a2 2 0 0 1 3.42 0l8.02 13.9A2 2 0 0 1 20 21H4a2 2 0 0 1-1.73-3.24l8.02-13.9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 9v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <span>Not saved</span>
+        </div>
+      </div>
+
+      <div class="dateRow">
+        <input id="dateInput" type="date" />
+        <button class="btnPrimary" id="saveBtn" type="button">
+          <!-- save icon -->
+          <span style="display:inline-flex; align-items:center; gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <path d="M17 21V13H7v8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7 3v5h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Save day</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="section">
+        <button class="btnSecondary" id="resetBtn" type="button">Reset this date</button>
+        <div class="hint">
+          Reminder: while this page is open, it will prompt you after <b>17:00</b> if you haven’t saved and tasks are still outstanding.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="taskList"></div>
+    <div class="footerSpace"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "work-task-tracker-singlehtml-v1";
+
+  const STATUS = { INCOMPLETE: "incomplete", COMPLETE: "complete", NA: "na" };
+
+  // Saturday-only task: onlyOnWeekday = 6 (0=Sun..6=Sat)
+  const TASKS = [
+    { title: "Check Money and floats" },
+    { title: "Cash bags for the next day" },
+    { title: "Fill out cash remittance on Y drive" },
+    { title: "Fill out shift takings on Y drive" },
+    { title: "Check Trio numbers are correct and add up" },
+    { title: "Pay at destination is dated for the next day" },
+    { title: "Change Trio dates for the next day" },
+    { title: "Change Bin bags on the platform" },
+    { title: "Check & clean Toilets" },
+    { title: "Clean Booking Hall" },
+    { title: "POS Machine covers" },
+    { title: "Start the dishwasher" },
+    { title: "Date the log book for next shift" },
+    { title: "Fill ticket hoppers" },
+    { title: "Clean Booking Office" },
+    { title: "Clean kitchen and empty bins" },
+    { title: "Close all gates on the platform" },
+    { title: "Activate Alarm on exit" },
+    { title: "Put Trios, floats & Cash bags in safe" },
+    { title: "Put pink book in the bottom safe" },
+    { title: "Replace daily check sheets for new week", onlyOnWeekday: 6 }
+  ];
+
+  const el = (id) => document.getElementById(id);
+  const taskListEl = el("taskList");
+  const dateInput = el("dateInput");
+  const saveBtn = el("saveBtn");
+  const resetBtn = el("resetBtn");
+  const prettyDateEl = el("prettyDate");
+  const badgeEl = el("saveBadge");
+  const statTotal = el("statTotal");
+  const statComplete = el("statComplete");
+  const statOutstanding = el("statOutstanding");
+  const toastEl = el("toast");
+
+  function todayISO() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
+  function weekdayFromISO(iso) {
+    const [y, m, d] = iso.split("-").map(Number);
+    const dt = new Date(y, (m || 1) - 1, d || 1);
+    return dt.getDay();
+  }
+
+  function prettyDate(iso) {
+    const [y, m, d] = iso.split("-").map(Number);
+    const dt = new Date(y, (m || 1) - 1, d || 1);
+    return dt.toLocaleDateString(undefined, { weekday:"short", year:"numeric", month:"short", day:"numeric" });
+  }
+
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.style.display = "block";
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => (toastEl.style.display = "none"), 2200);
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return { days: {}, reminder: { enabled: true, hour: 17, minute: 0 } };
+  }
+
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function tasksForDate(dateISO) {
+    const weekday = weekdayFromISO(dateISO);
+    const filtered = TASKS.filter(t => (typeof t.onlyOnWeekday === "number" ? t.onlyOnWeekday === weekday : true));
+    return filtered.map((t, idx) => ({
+      id: `task-${idx+1}`,
+      title: t.title,
+      status: STATUS.INCOMPLETE
+    }));
+  }
+
+  let state = loadState();
+  let selectedDate = todayISO();
+  let workingTasks = [];
+  let lastNagKey = "";
+
+  function getSavedDay(dateISO) {
+    return state.days?.[dateISO] || null;
+  }
+
+  function computeWorkingTasks(dateISO) {
+    const base = tasksForDate(dateISO);
+    const saved = getSavedDay(dateISO);
+    if (saved?.tasks?.length) {
+      const map = new Map(saved.tasks.map(t => [t.id, t.status]));
+      return base.map(t => ({ ...t, status: map.get(t.id) || STATUS.INCOMPLETE }));
+    }
+    return base;
+  }
+
+  function setBadge(saved) {
+    if (saved) {
+      badgeEl.className = "badge badgeOk";
+      badgeEl.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Saved</span>
+      `;
+    } else {
+      badgeEl.className = "badge badgeWarn";
+      badgeEl.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10.29 3.86a2 2 0 0 1 3.42 0l8.02 13.9A2 2 0 0 1 20 21H4a2 2 0 0 1-1.73-3.24l8.02-13.9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 9v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span>Not saved</span>
+      `;
+    }
+  }
+
+  function renderStats() {
+    const total = workingTasks.length;
+    const complete = workingTasks.filter(t => t.status === STATUS.COMPLETE).length;
+    const outstanding = workingTasks.filter(t => t.status === STATUS.INCOMPLETE).length;
+    statTotal.textContent = String(total);
+    statComplete.textContent = String(complete);
+    statOutstanding.textContent = String(outstanding);
+  }
+
+  function iconHTML(status) {
+    if (status === STATUS.COMPLETE) {
+      return `<span class="icon complete" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M20 6 9 17l-5-5" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>`;
+    }
+    if (status === STATUS.NA) {
+      return `<span class="icon na" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M6 12h12" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </span>`;
+    }
+    return `<span class="icon" aria-hidden="true"></span>`;
+  }
+
+  function pill(label, isActive, onclick) {
+    const btn = document.createElement("div");
+    btn.className = "pill" + (isActive ? " active" : "");
+    btn.setAttribute("role", "button");
+    btn.setAttribute("tabindex", "0");
+    btn.textContent = label;
+    btn.addEventListener("click", onclick);
+    btn.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") onclick();
+    });
+    return btn;
+  }
+
+  function renderTasks() {
+    taskListEl.innerHTML = "";
+    workingTasks.forEach((t) => {
+      const card = document.createElement("div");
+      card.className = "card2 taskCard";
+
+      const top = document.createElement("div");
+      top.className = "taskTop";
+      top.innerHTML = `${iconHTML(t.status)}
+        <div style="min-width:0; flex:1">
+          <p class="taskTitle ${t.status === STATUS.COMPLETE ? "complete" : ""}">${escapeHtml(t.title)}</p>
+        </div>
+      `;
+
+      const statusRow = document.createElement("div");
+      statusRow.className = "statusRow";
+
+      statusRow.appendChild(pill("Complete", t.status === STATUS.COMPLETE, () => setTaskStatus(t.id, STATUS.COMPLETE)));
+      statusRow.appendChild(pill("Incomplete", t.status === STATUS.INCOMPLETE, () => setTaskStatus(t.id, STATUS.INCOMPLETE)));
+      statusRow.appendChild(pill("N/A", t.status === STATUS.NA, () => setTaskStatus(t.id, STATUS.NA)));
+
+      card.appendChild(top);
+      card.appendChild(statusRow);
+      taskListEl.appendChild(card);
+    });
+
+    renderStats();
+  }
+
+  function setTaskStatus(id, status) {
+    workingTasks = workingTasks.map(t => (t.id === id ? { ...t, status } : t));
+    // If the user changes tasks after saving, show Not saved again for that date (so they remember to re-save).
+    if (state.days?.[selectedDate]?.savedAt) {
+      setBadge(false);
+    }
+    renderTasks();
+  }
+
+  function refreshForDate(dateISO) {
+    selectedDate = dateISO;
+    prettyDateEl.textContent = prettyDate(selectedDate);
+    workingTasks = computeWorkingTasks(selectedDate);
+
+    const saved = Boolean(getSavedDay(selectedDate)?.savedAt);
+    setBadge(saved);
+    renderTasks();
+  }
+
+  function saveDay() {
+    const outstanding = workingTasks.filter(t => t.status === STATUS.INCOMPLETE).length;
+    if (outstanding > 0) {
+      const ok = window.confirm(`You still have ${outstanding} outstanding task(s) for ${prettyDate(selectedDate)}.\n\nPress OK to save anyway, or Cancel to go back and finish them.`);
+      if (!ok) return;
+    }
+    state.days[selectedDate] = { savedAt: new Date().toISOString(), tasks: workingTasks };
+    saveState(state);
+    setBadge(true);
+    showToast("Saved ✓");
+  }
+
+  function resetDay() {
+    const ok = window.confirm("Reset all tasks for this date back to Incomplete?");
+    if (!ok) return;
+    workingTasks = tasksForDate(selectedDate); // respects Saturday-only task
+    // Do not delete saved record automatically—treat as edit; user can Save day again
+    setBadge(false);
+    renderTasks();
+    showToast("Reset");
+  }
+
+  function setupReminderLoop() {
+    setInterval(() => {
+      const r = state.reminder || { enabled:true, hour:17, minute:0 };
+      if (!r.enabled) return;
+
+      const isoToday = todayISO();
+      if (selectedDate !== isoToday) return;
+
+      const saved = Boolean(state.days?.[isoToday]?.savedAt);
+      if (saved) return;
+
+      const now = new Date();
+      const due = now.getHours() > r.hour || (now.getHours() === r.hour && now.getMinutes() >= r.minute);
+      if (!due) return;
+
+      const outstanding = workingTasks.filter(t => t.status === STATUS.INCOMPLETE).length;
+      if (outstanding <= 0) return;
+
+      const key = `${isoToday}-${r.hour}:${r.minute}`;
+      if (lastNagKey === key) return;
+      lastNagKey = key;
+
+      window.alert(`Reminder: ${outstanding} task(s) are still outstanding today. Please review and save your day.`);
+    }, 30000);
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  // Init
+  dateInput.value = selectedDate;
+  dateInput.max = todayISO();
+  dateInput.addEventListener("change", (e) => refreshForDate(e.target.value));
+  saveBtn.addEventListener("click", saveDay);
+  resetBtn.addEventListener("click", resetDay);
+
+  refreshForDate(selectedDate);
+  setupReminderLoop();
+
+})();
+</script>
+</body>
+</html>
